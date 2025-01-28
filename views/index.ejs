@@ -4,67 +4,115 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ENI ISSUE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body>
-    <table border="1">
-      <thead>
-        <tr>
-          <th>Auteur</th>
-          <th>Date de création</th>
-          <th>Titre</th>
-          <th>Description</th>
-          <th>État</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% issues.forEach(issue => { %>
-        <tr>
-          <td><%= issue.auteur %></td>
-          <td><%= issue.date %></td>
-          <td><%= issue.titre %></td>
-          <td><%= issue.description %></td>
-          <td><%= issue.etat %></td>
-        </tr>
 
-        <tr>
-          <% }) %>
-        </tr>
-      </tbody>
+    <div style="width: 60%; margin: auto">
+
+        <% if(issues.length > 0) { %>
+            <h1 class="text-2xl font-bold text-center mb-4">Liste des issues</h1>
+        
+<div class="relative overflow-x-auto">
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3">Auteur</th>
+                <th scope="col" class="px-6 py-3">Date de création</th>
+                <th scope="col" class="px-6 py-3">Titre</th>
+                <th scope="col" class="px-6 py-3">Description</th>
+                <th scope="col" class="px-6 py-3">État</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% issues.forEach(issue => { %>
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                <td class="px-6 py-4"><%= issue.auteur %></td>
+                <td class="px-6 py-4"><%= issue.date %></td>
+                <td class="px-6 py-4"><%= issue.titre %></td>
+                <td class="px-6 py-4"><%= issue.description %></td>
+                <td class="px-6 py-4"><%= issue.etat %></td>
+            </tr>
+            <% }) %>
+        </tbody>
     </table>
+</div>
+<% } else { %>
+    <h1 class="text-2xl font-bold text-center mb-4">Aucune issue pour le moment</h1>
+<% } %>
+
     <hr />
+    <h2 class="text-2xl font-bold text-center mb-4">Créer une nouvelle issue</h2>
     <form action="/issues/create" method="POST">
-      <label for id="auteur">Auteur : </label>
-      <input
-        required
-        id="auteur"
-        name="auteur"
-        type="text"
-        placeholder="Nom de l'auteur"
-      />
-      <label for id="date">Date de création : </label>
-      <input required id="date" name="date" type="date" />
-      <label for id="titre">Titre : </label>
-      <input
-        required
-        id="titre"
-        name="titre"
-        type="text"
-        placeholder="Titre de l'issue"
-      />
-      <label for id="description">Description : </label>
-      <input
-        required
-        id="description"
-        name="description"
-        type="text"
-        placeholder="Description de l'issue"
-      />
-      <label for id="etat">État : </label>
-      <select required id="etat" name="etat">
-        <option value="open">Open</option>
-        <option value="closed">Closed</option>
-      </select>
-      <button type="submit">Créer</button>
+      
+        <!-- Text input -->
+        <div class="mb-4 w-full">
+          <label for="09eafa27-bce1-49f7-b4e4-c9d6049accf0"
+            >Nom de l'auteur :</label
+          >
+          <input
+            name="auteur"
+            placeholder="Nom de l'auteur"
+            type="text"
+            id="09eafa27-bce1-49f7-b4e4-c9d6049accf0"
+            class="w-full block rounded-lg border dark:border-none dark:bg-neutral-600 py-[9px] px-3 pr-4 text-sm focus:border-blue-400 focus:ring-1 focus:ring-blue-400 focus:outline-none"
+          />
+        </div>
+
+        <!-- Text input -->
+        <div class="mb-4 w-full">
+          <label for="58547c62-19e0-40e1-8588-34f9b4460fbb"
+            >Date de création :</label
+          >
+          <input
+            name="date"
+            placeholder="Date de création"
+            type="date"
+            id="58547c62-19e0-40e1-8588-34f9b4460fbb"
+            class="w-full block rounded-lg border dark:border-none dark:bg-neutral-600 py-[9px] px-3 pr-4 text-sm focus:border-blue-400 focus:ring-1 focus:ring-blue-400 focus:outline-none"
+          />
+        </div>
+
+        <!-- Text input -->
+        <div class="mb-4 w-full">
+          <label for="31ab91a8-944c-4ad6-abe0-abdd61e5515d">Titre :</label>
+          <input
+            name="titre"
+            placeholder="Titre"
+            type="text"
+            id="31ab91a8-944c-4ad6-abe0-abdd61e5515d"
+            class="w-full block rounded-lg border dark:border-none dark:bg-neutral-600 py-[9px] px-3 pr-4 text-sm focus:border-blue-400 focus:ring-1 focus:ring-blue-400 focus:outline-none"
+          />
+        </div>
+
+        <!-- Textarea -->
+        <div class="mb-4 w-full">
+          <label for="5f34b6cb-fa74-477d-80cc-10bc61aa11fb"
+            >Description :</label
+          >
+          <textarea
+            name="description"
+            placeholder="Description"
+            id="5f34b6cb-fa74-477d-80cc-10bc61aa11fb"
+            rows="4"
+            class="w-full block rounded-lg border dark:border-none dark:bg-neutral-600 py-[9px] px-3 pr-4 text-sm focus:border-blue-400 focus:ring-1 focus:ring-blue-400 focus:outline-none"
+          ></textarea>
+        </div>
+        <div class="mb-4 w-full">
+            <label for="etat">État :</label>
+          <select name="etat" id="etat">
+            <option value="En cours">En cours</option>
+            <option value="Terminé">Terminé</option>
+          </select>
+        </div>
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="block mb-4 w-full rounded-full bg-blue-500 text-neutral-50 shadow-[0_4px_9px_-4px_rgba(51,45,45,0.7)] hover:bg-blue-600 hover:shadow-[0_8px_9px_-4px_rgba(51,45,45,0.2),0_4px_18px_0_rgba(51,45,45,0.1)] focus:bg-blue-800 focus:shadow-[0_8px_9px_-4px_rgba(51,45,45,0.2),0_4px_18px_0_rgba(51,45,45,0.1)] active:bg-blue-700 active:shadow-[0_8px_9px_-4px_rgba(51,45,45,0.2),0_4px_18px_0_rgba(51,45,45,0.1)] px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal transition duration-150 ease-in-out focus:outline-none focus:ring-0"
+        >
+          Créer la nouvelle issue
+        </button>
+      </div>
     </form>
   </body>
 </html>
