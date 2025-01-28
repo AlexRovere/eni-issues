@@ -26,6 +26,11 @@ app.get("/delete-issue/:id", (req, res) => {
     res.redirect("/");
 });
 
+app.get("/edit-issue/:id", (req, res) => {
+    const { id } = req.params;
+    res.render("edit", { issue: issues[id - 1] });
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
