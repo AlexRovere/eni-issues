@@ -86,11 +86,16 @@
                             <span class="mt-1 text-gray-500 text-sm">
                                 <%= issue.date %>
                             </span>
-                            <p class="text-green-500 inline-flex items-center mt-4">
-                                <%= issue.etat %>
-                            </p>
-                            
-                            <a href="">Modifier</a>
+                            <% if (issue.etat == 'resolu') { %>
+                                <p class="text-green-500 inline-flex items-center mt-4 line-through">
+                                    Résolu!
+                                </p>
+                            <% } else { %>
+                                <p class="text-red-500 inline-flex items-center mt-4 underline">
+                                    En cours!
+                                </p>   
+                            <% } %>
+                            <a href="/edit-issue/<%=issue.id%>">Modifier</a>
                             <a href="/delete-issue/:id">Supprimer</a>
                         </a>
                     <% }); %>
