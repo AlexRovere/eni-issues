@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ENI ISSUE</title>
+  </head>
+  <body>
+    <table>
+      <thead>
+        <tr>
+          <th>Auteur</th>
+          <th>Date de création</th>
+          <th>Titre</th>
+          <th>Description</th>
+          <th>État</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+    <form action="/issues/create" method="POST">
+      <label for id="auteur">Auteur : </label>
+      <input
+        required
+        id="auteur"
+        name="auteur"
+        type="text"
+        placeholder="Nom de l'auteur"
+      />
+      <label for id="date">Date de création : </label>
+      <input required id="date" name="date" type="date" />
+      <label for id="titre">Titre : </label>
+      <input
+        required
+        id="titre"
+        name="titre"
+        type="text"
+        placeholder="Titre de l'issue"
+      />
+      <label for id="description">Description : </label>
+      <input
+        required
+        id="description"
+        name="description"
+        type="text"
+        placeholder="Description de l'issue"
+      />
+      <label for id="etat">État : </label>
+      <select required id="etat" name="etat">
+        <option value="open">Open</option>
+        <option value="closed">Closed</option>
+      </select>
+      <button type="submit">Créer</button>
+    </form>
+  </body>
+</html>
