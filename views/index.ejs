@@ -11,61 +11,71 @@
 
     <section class="text-gray-600 body-font overflow-hidden">
         <div class="container px-5 py-24 mx-auto">
-          <div class="-my-8 divide-y-2 divide-gray-100">
+            <h2>Ajouter une nouvelle issue:</h2>
+            <form action="/add-issue" method="post">
+                <div>
+                    <label for="titre">Titre:</label>
+                    <input type="text" name="titre" id="titre">
+                </div>
 
-            <div class="py-8 flex flex-wrap md:flex-nowrap">
-              <div class="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
-                <span class="font-semibold title-font text-gray-700">Auteur</span>
-                <span class="mt-1 text-gray-500 text-sm">12 Jun 2019</span>
-              </div>
-              <div class="md:flex-grow">
-                <h2 class="text-2xl font-medium text-gray-900 title-font mb-2">TITRE ISSUE</h2>
-                <p class="leading-relaxed">DESCRIPTION ISSUE Lorem ipsum dolor sit amet consectetur adipisicing elit. Et ab ducimus minima voluptatem modi odio accusamus pariatur commodi voluptatibus ratione officia totam, distinctio blanditiis consequuntur delectus animi incidunt nulla quasi.</p>
-                <a class="text-green-500 inline-flex items-center mt-4">Afficher issue
-                  <svg class="w-4 h-4 ml-2" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 12h14"></path>
-                    <path d="M12 5l7 7-7 7"></path>
-                  </svg>
-                </a>
-              </div>
-            </div>
+                <div>
+                    <label for="description">Description:</label>
+                    <input type="text" name="description" id="description">
+                </div>
 
-            <div class="py-8 flex flex-wrap md:flex-nowrap">
-              <div class="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
-                <span class="font-semibold title-font text-gray-700">CATEGORY</span>
-                <span class="mt-1 text-gray-500 text-sm">12 Jun 2019</span>
-              </div>
-              <div class="md:flex-grow">
-                <h2 class="text-2xl font-medium text-gray-900 title-font mb-2">Meditation bushwick direct trade taxidermy shaman</h2>
-                <p class="leading-relaxed">Glossier echo park pug, church-key sartorial biodiesel vexillologist pop-up snackwave ramps cornhole. Marfa 3 wolf moon party messenger bag selfies, poke vaporware kombucha lumbersexual pork belly polaroid hoodie portland craft beer.</p>
-                <a class="text-green-500 inline-flex items-center mt-4">Learn More
-                  <svg class="w-4 h-4 ml-2" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 12h14"></path>
-                    <path d="M12 5l7 7-7 7"></path>
-                  </svg>
-                </a>
-              </div>
-            </div>
+                <div>
+                    <label for="auteur">Auteur:</label>
+                    <input type="text" name="auteur" id="auteur">
+                </div>
 
-            <div class="py-8 flex flex-wrap md:flex-nowrap">
-              <div class="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
-                <span class="font-semibold title-font text-gray-700">CATEGORY</span>
-                <span class="text-sm text-gray-500">12 Jun 2019</span>
-              </div>
-              <div class="md:flex-grow">
-                <h2 class="text-2xl font-medium text-gray-900 title-font mb-2">Woke master cleanse drinking vinegar salvia</h2>
-                <p class="leading-relaxed">Glossier echo park pug, church-key sartorial biodiesel vexillologist pop-up snackwave ramps cornhole. Marfa 3 wolf moon party messenger bag selfies, poke vaporware kombucha lumbersexual pork belly polaroid hoodie portland craft beer.</p>
-                <a class="text-green-500 inline-flex items-center mt-4">Learn More
-                  <svg class="w-4 h-4 ml-2" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 12h14"></path>
-                    <path d="M12 5l7 7-7 7"></path>
-                  </svg>
-                </a>
-              </div>
-            </div>
+                <div>
+                    <label for="date">Date:</label>
+                    <input type="date" name="date" id="date">
+                </div>
 
-          </div>
+                <div>
+                    <label for="etat">Etat:</label>
+                    <select name="etat" id="etat">
+                        <option value="en-cours">En cours</option>
+                        <option value="resolu">Résolu</option>
+                    </select>
+                </div>
+
+                <div>
+                    <button type="submit">Envoyer</button>
+                </div>
+            </form>
         </div>
+    </section>
+
+    <section class="text-gray-600 body-font overflow-hidden">
+        <h2>Liste des issues:</h2>
+        <% if (issues.length > 0) { %> 
+            <div class="container px-5 py-24 mx-auto">
+                <div class="-my-8 divide-y-2 divide-gray-100">
+                    <% issues.forEach(issue => { %>
+                    <div class="py-8 flex flex-wrap md:flex-nowrap">
+
+                        <div class="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
+                            <span class="font-semibold title-font text-gray-700"><%= issue.auteur %></span>
+                            <span class="mt-1 text-gray-500 text-sm"><%= issue.date %></span>
+                        </div>
+
+                        <div class="md:flex-grow">
+                            <h2 class="text-2xl font-medium text-gray-900 title-font mb-2"><%= issue.titre %></h2>
+                            <p class="leading-relaxed"><%= issue.description %></p>
+                            <p class="text-green-500 inline-flex items-center mt-4"><%= issue.etat %></p>
+                        </div>
+                    </div>
+                    <% }); %>
+                </div>
+            </div>
+        <% } else { %> 
+            <div class="container px-5 py-24 mx-auto">
+                <h2>Pas d'issues pour le moment.</h2>
+            </div>
+        <% } %>
       </section>
+      
 </body>
 </html>
