@@ -19,19 +19,24 @@ let issues = [
 ];
 
 let issue = [
-  {
-    auteur: "yonni",
-    date: "2021-01-01",
-    titre: "titre",
-    description: "description",
-    etat: "etat",
-  },
+
 ];
 
 let formTitle = "Ajouter une issue";
 let formAction = "/issues/create";
 let formButton = "Ajouter une issue";
 
+app.get("/error", (req, res) => {
+    throw new Error("This is a test error!");
+});
+
+// Middleware général
+app.use((err, req, res, next) => {
+
+  console.error(err.stack);
+  const erreur = { nom: err.name, message: err.message, stack: err.stack };
+  res.status(500).render("error", { erreur });
+});
 
 app.get("/", (req, res) => {
     res.render("index", { issues, issue, formTitle, formAction, formButton });
