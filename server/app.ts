@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import path from 'path'
-import { Issue, State } from "./types/Issue";
+import { Ticket, State } from "./types/Ticket";
 
 dotenv.config();
 const app = express();
@@ -13,101 +13,101 @@ app.set('views', path.join(__dirname, 'pages'));
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
-const issues: Issue[] = [
+const tickets: Ticket[] = [
   {
     id: 1,
-    title: 'Ma première issue',
+    title: 'Ma première ticket',
     description: 'ma description',
     author: 'Alex',
     state: State.OPEN,
     createdAt: new Date(),
-    messages: []
+    responses: []
   },
   {
     id: 2,
-    title: 'Ma deuxième issue',
+    title: 'Ma deuxième ticket',
     description: 'ma description',
     author: 'Jean',
     state: State.OPEN,
     createdAt: new Date(),
-    messages: []
+    responses: []
 
   },
   {
     id: 3,
-    title: 'Ma troisième issue',
+    title: 'Ma troisième ticket',
     description: 'ma description',
     author: 'Pierre',
     state: State.OPEN,
     createdAt: new Date(),
-    messages: []
+    responses: []
   }
 ]
 
 let idx = 4
 
-app.get(["/", "/issues"], (req: Request, res: Response) => {
+app.get(["/", "/tickets"], (req: Request, res: Response) => {
   let data = {
     title: "bonjour",
-    issues
+    tickets
   }
 
-  res.render("issues", data)
+  res.render("tickets", data)
 })
 
-app.post("/create/issues", (req: Request, res: Response) => {
+app.post("/tickets/create", (req: Request, res: Response) => {
 
-  const issue: Issue = {
+  const ticket: Ticket = {
     id: idx++,
     title: req.body.title,
     description: req.body.description,
     author: req.body.author,
     state: State.OPEN,
     createdAt: new Date(),
-    messages: []
+    responses: []
   }
 
-  issues.push(issue)
+  tickets.push(ticket)
 
-  res.redirect("/issues")
+  res.redirect("/")
 })
 
 
-app.get("/issues/close/:id", (req: Request, res: Response) => {
+app.get("/tickets/close/:id", (req: Request, res: Response) => {
 
   if (req.params.id) {
 
-    let arrayIdx: number = issues.findIndex(i => i.id === +req.params.id)
+    let arrayIdx: number = tickets.findIndex(i => i.id === +req.params.id)
 
     if (arrayIdx > -1) {
-      issues[arrayIdx].state = State.CLOSED
+      tickets[arrayIdx].state = State.CLOSED
     }
   }
 
   res.redirect("/")
 })
 
-app.get("/issues/delete/:id", (req: Request, res: Response) => {
+app.get("/tickets/delete/:id", (req: Request, res: Response) => {
 
   if (req.params.id) {
 
-    let arrayIdx: number = issues.findIndex(i => i.id === +req.params.id)
+    let arrayIdx: number = tickets.findIndex(i => i.id === +req.params.id)
 
     if (arrayIdx > -1) {
-      issues.splice(arrayIdx, 1)
+      tickets.splice(arrayIdx, 1)
     }
   }
   res.redirect("/")
 })
 
 
-app.get("/issues/detail/:id", (req: Request, res: Response) => {
+app.get("/tickets/detail/:id", (req: Request, res: Response) => {
   if (req.params.id) {
-    let issue: Issue | undefined = issues.find(i => i.id === +req.params.id)
+    let ticket: Ticket | undefined = tickets.find(i => i.id === +req.params.id)
 
-    if (issue) {
+    if (ticket) {
       let data = {
-        issue
+        ticket
       }
       res.render("detail", data)
     }
@@ -115,62 +115,66 @@ app.get("/issues/detail/:id", (req: Request, res: Response) => {
 })
 
 
-app.get("/issues/update/:id", (req: Request, res: Response) => {
+app.get("/tickets/update/:id", (req: Request, res: Response) => {
 
   if (req.params.id) {
 
-    let issue: Issue | undefined = issues.find(i => i.id === +req.params.id)
+    let ticket: Ticket | undefined = tickets.find(i => i.id === +req.params.id)
 
-    if (issue) {
+    if (ticket) {
       let data = {
-        issue
+        ticket
       }
       res.render("update", data)
     }
   }
 })
 
-app.post("/issues/update", (req: Request, res: Response) => {
+app.post("/tickets/update", (req: Request, res: Response) => {
 
   if (req.body.id) {
 
-    let arrayIdx: number = issues.findIndex(i => i.id === +req.body.id)
+    let arrayIdx: number = tickets.findIndex(i => i.id === +req.body.id)
 
     if (arrayIdx > -1) {
-      issues[arrayIdx].title = req.body.title || issues[arrayIdx].title
-      issues[arrayIdx].description = req.body.description || issues[arrayIdx].description
-      issues[arrayIdx].author = req.body.author || issues[arrayIdx].author
+      tickets[arrayIdx].title = req.body.title || tickets[arrayIdx].title
+      tickets[arrayIdx].description = req.body.description || tickets[arrayIdx].description
+      tickets[arrayIdx].author = req.body.author || tickets[arrayIdx].author
     }
   }
   res.redirect("/")
 })
 
-app.post("/issues/message/create", (req: Request, res: Response) => {
+app.post("/tickets/message/create", (req: Request, res: Response) => {
 
   if (req.body.id) {
 
-    let arrayIdx: number = issues.findIndex(i => i.id === +req.body.id)
+    let arrayIdx: number = tickets.findIndex(i => i.id === +req.body.id)
 
     if (arrayIdx > -1) {
-      issues[arrayIdx].messages.push(req.body.message)
+      tickets[arrayIdx].responses.push(req.body.message)
     }
   }
-  res.redirect(`/issues/detail/${req.body.id}`)
+  res.redirect(`/tickets/detail/${req.body.id}`)
 })
 
-app.get("/issues/:issueId/messages/supprimer/:messageIdx", (req: Request, res: Response) => {
+app.get("/tickets/:ticketId/responses/supprimer/:messageIdx", (req: Request, res: Response) => {
 
-  if (req.params.issueId && req.params.messageIdx) {
+  if (req.params.ticketId && req.params.messageIdx) {
 
-    let issue: Issue | undefined = issues.find(i => i.id === +req.params.issueId)
+    let ticket: Ticket | undefined = tickets.find(i => i.id === +req.params.ticketId)
 
-    if (issue) {
-      issue.messages.splice(+req.params.messageIdx, 1)
+    if (ticket) {
+      ticket.responses.splice(+req.params.messageIdx, 1)
     }
-    res.redirect(`/issues/detail/${req.params.issueId}`)
+    res.redirect(`/tickets/detail/${req.params.ticketId}`)
   }
 
 })
+
+app.all('*', (req: Request, res: Response) => {
+  res.status(404).render('404');
+});
 
 
 app.listen(PORT, () => {

@@ -1,23 +1,23 @@
 <%- include('header'); -%>
 
   <div class="flex-grow flex flex-col">
-    <form class="w-full max-w-md mx-auto pt-5 " action="/issues/update" method="POST">
+    <form class="w-full max-w-md mx-auto pt-5 " action="/tickets/update" method="POST">
 
-      <input type="hidden" name="id" value="<%= issue.id %>">
+      <input type="hidden" name="id" value="<%= ticket.id %>">
 
       <div class=" mb-5">
         <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Titre</label>
-        <input type="text" id="title" value="<%= issue.title %>" name="title" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        <input type="text" id="title" value="<%= ticket.title %>" name="title" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
       </div>
 
       <div class="mb-5">
         <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Description</label>
-        <input type="text" id="description" value="<%= issue.description %>" name="description" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        <input type="text" id="description" value="<%= ticket.description %>" name="description" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
       </div>
 
       <div class="mb-5">
         <label for="author" class="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Auteur</label>
-        <input type="text" id="author" value="<%= issue.author %>" name="author" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        <input type="text" id="author" value="<%= ticket.author %>" name="author" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
       </div>
 
       <div class="flex justify-center">

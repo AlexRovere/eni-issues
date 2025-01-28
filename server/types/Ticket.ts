@@ -1,11 +1,11 @@
-export type Issue = {
+export type Ticket = {
   id: number,
   title: string,
   description: string,
   author: string,
   state: State,
   createdAt: Date,
-  messages: string[]
+  responses: string[]
 }
 
 export enum State {
