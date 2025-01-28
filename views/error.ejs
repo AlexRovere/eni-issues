@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ERROR</title>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  </head>
+  <body>
+    <section class="text-gray-600 body-font">
+      <div
+        class="container mx-auto flex px-5 py-24 items-center justify-center flex-col text-center"
+      >
+        <dotlottie-player
+          src="https://lottie.host/40209fad-43c9-4ede-ab86-3b5d1871548b/lHnO0SzCIQ.lottie"
+          background="transparent"
+          speed="1"
+          style="width: 300px; height: 300px"
+          loop
+          autoplay
+        ></dotlottie-player>
+        <div class="text-center lg:w-2/3 w-full">
+          <h1
+            class="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900"
+          >
+            ERREUR !!!
+          </h1>
+          <p class="mb-8 leading-relaxed">
+            <%= error %>
+        </p>
+        </div>
+      </div>
+    </section>
+
+    <script
+      src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs"
+      type="module"
+    ></script>
+  </body>
+</html>
