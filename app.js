@@ -14,8 +14,15 @@ app.get("/", (req, res) => {
 });
 
 app.post("/add-issue", (req, res) => {
+    let id = issues.length + 1;
     const { titre, description, auteur, date, etat } = req.body;
-    issues.push({ titre, description, auteur, date, etat });
+    issues.push({ id, titre, description, auteur, date, etat });
+    res.redirect("/");
+});
+
+app.get("/delete-issue/:id", (req, res) => {
+    const { id } = req.params;
+    issues.splice(id - 1, 1);
     res.redirect("/");
 });
 

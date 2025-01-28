@@ -29,27 +29,27 @@
                 
                 <div class="m-3">
                     <label for="titre">Titre:</label>
-                    <input type="text" name="titre" id="titre" class="shadow-md border border-gray-300 m-2">
+                    <input type="text" name="titre" id="titre" class="shadow-md border border-gray-300 m-2 p-1">
                 </div>
 
                 <div class="m-3">
                     <label for="description">Description:</label>
-                    <textarea name="description" id="description" class="shadow-md border border-gray-300 m-2"></textarea>
+                    <textarea name="description" id="description" class="shadow-md border border-gray-300 m-2 p-1"></textarea>
                 </div>
 
                 <div class="m-3">
                     <label for="auteur">Auteur:</label>
-                    <input type="text" name="auteur" id="auteur" class="shadow-md border border-gray-300 m-2">
+                    <input type="text" name="auteur" id="auteur" class="shadow-md border border-gray-300 m-2 p-1">
                 </div>
 
                 <div class="m-3">
                     <label for="date">Date:</label>
-                    <input type="date" name="date" id="date" class="shadow-md border border-gray-300 m-2">
+                    <input type="date" name="date" id="date" class="shadow-md border border-gray-300 m-2 p-1">
                 </div>
 
                 <div class="m-3">
                     <label for="etat">Etat:</label>
-                    <select name="etat" id="etat" class="shadow-md border border-gray-300 m-2">
+                    <select name="etat" id="etat" class="shadow-md border border-gray-300 m-2 p-1">
                         <option value="en-cours">En cours</option>
                         <option value="resolu">Résolu</option>
                     </select>
@@ -75,7 +75,7 @@
                         <a href="#" class="block p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
 
                             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                                <%= issue.titre %>
+                                <%= issue.titre %> (ID: <%= issue.id %>)
                             </h5>
                             <p class="font-normal text-gray-700 dark:text-gray-400">
                                 <%= issue.description %>
@@ -90,6 +90,8 @@
                                 <%= issue.etat %>
                             </p>
                             
+                            <a href="">Modifier</a>
+                            <a href="/delete-issue/:id">Supprimer</a>
                         </a>
                     <% }); %>
                 
