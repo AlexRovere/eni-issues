@@ -31,6 +31,22 @@ app.get("/edit-issue/:id", (req, res) => {
     res.render("edit", { issue: issues[id - 1] });
 });
 
+app.post("/edit-issue/:id", (req, res) => {
+    const { id } = req.params;
+    const { titre, description, auteur, date, etat } = req.body;
+    issues[id - 1] = { id, titre, description, auteur, date, etat };
+    res.redirect("/");
+});
+
+app.get('/error', (req, res, next) => {
+    next(new Error("Ceci est un test d'erreur"));
+});
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.render("error", { error: err.message });
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
