@@ -15,28 +15,15 @@ let issues = [
     titre: "titre",
     description: "description",
     etat: "etat",
+    messages: [],
   },
 ];
 
-let issue = [
-
-];
+let issue = [];
 
 let formTitle = "Ajouter une issue";
 let formAction = "/issues/create";
 let formButton = "Ajouter une issue";
-
-app.get("/error", (req, res) => {
-    throw new Error("This is a test error!");
-});
-
-// Middleware général
-app.use((err, req, res, next) => {
-
-  console.error(err.stack);
-  const erreur = { nom: err.name, message: err.message, stack: err.stack };
-  res.status(500).render("error", { erreur });
-});
 
 app.get("/", (req, res) => {
     res.render("index", { issues, issue, formTitle, formAction, formButton });
@@ -67,7 +54,35 @@ app.get("/issues/delete/:id", (req, res) => {
     res.redirect("/"); 
 });
 
+/* ====================== ISSUE =====================*/
+app.get("/issue/:id", (req, res) => {
+  const issue = issues[req.params.id];
+  res.render("issue", { issue, issueId: req.params.id });
+});
+
+/* ====================== ISSUE =====================*/
+app.post("/issue/:id/messages/create", (req, res) => {
+  //const issue = issues[req.params.id];
+  res.redirect(`/issue/${req.params.id}`);
+});
+
+
 app.listen(port, () => {
   console.log("Le serveur tourne sur le port " + port);
 
 });
+
+/* ====================== GESTION ERREUR NON PREVUE =====================*/
+/*
+
+app.get("/error", (req, res) => {
+  throw new Error("This is a test error!");
+});
+
+// Middleware général
+app.use((err, req, res, next) => {
+  const erreur = { nom: err.name, message: err.message, stack: err.stack };
+  res.status(404).render("error", { erreur });
+});
+
+*/
