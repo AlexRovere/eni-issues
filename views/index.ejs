@@ -6,7 +6,7 @@
     <title>ENI ISSUE</title>
   </head>
   <body>
-    <table>
+    <table border="1">
       <thead>
         <tr>
           <th>Auteur</th>
@@ -17,11 +17,21 @@
         </tr>
       </thead>
       <tbody>
+        <% issues.forEach(issue => { %>
         <tr>
-          <td></td>
+          <td><%= issue.auteur %></td>
+          <td><%= issue.date %></td>
+          <td><%= issue.titre %></td>
+          <td><%= issue.description %></td>
+          <td><%= issue.etat %></td>
+        </tr>
+
+        <tr>
+          <% }) %>
         </tr>
       </tbody>
     </table>
+    <hr />
     <form action="/issues/create" method="POST">
       <label for id="auteur">Auteur : </label>
       <input
