@@ -55,8 +55,9 @@ app.get('/error', (req, res, next) => {
 
 // Middleware pour gérer les erreurs
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.render("error", { error: err.message });
+    let erreurPerso = err.message;
+    console.log("ERREUR:::::" + erreurPerso);
+    res.render("error", { erreurPerso });
 });
 
 app.listen(port, () => {
