@@ -86,3 +86,8 @@ app.use((err, req, res, next) => {
 });
 
 */
+
+// le all capture toutes les méthodes de requête HTTP
+app.all('*', (req, res) => {
+  res.status(404).render('404');
+});
