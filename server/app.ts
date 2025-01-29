@@ -1,9 +1,16 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import path from 'path'
-import { Ticket, State } from "./types/Ticket";
+import { body, ValidationError, validationResult } from 'express-validator';
+import session from 'express-session'
+import connectDB from './database'
+import User from './models/User'
+import Movie from './models/Movie'
+import TicketDb, { ITicket, State } from './models/Ticket'
+
 
 dotenv.config();
+connectDB()
 const app = express();
 const PORT = process.env.PORT;
 
@@ -13,160 +20,177 @@ app.set('views', path.join(__dirname, 'pages'));
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
-const tickets: Ticket[] = [
-  {
-    id: 1,
-    title: 'Ma première ticket',
-    description: 'ma description',
-    author: 'Alex',
-    state: State.OPEN,
-    createdAt: new Date(),
-    responses: []
-  },
-  {
-    id: 2,
-    title: 'Ma deuxième ticket',
-    description: 'ma description',
-    author: 'Jean',
-    state: State.OPEN,
-    createdAt: new Date(),
-    responses: []
+if (!process.env.SECRET || process.env.SECRET.trim() === '') {
+  throw new Error('Le secret de session est manquant. Veuillez définir SECRET dans le fichier .env.');
+}
 
-  },
-  {
-    id: 3,
-    title: 'Ma troisième ticket',
-    description: 'ma description',
-    author: 'Pierre',
-    state: State.OPEN,
-    createdAt: new Date(),
-    responses: []
+app.use(session({
+  resave: false,
+  saveUninitialized: false,
+  secret: process.env.SECRET
+}));
+
+// Types pour la session
+declare module 'express-session' {
+  interface Session {
+    errors?: ValidationError[];
+    oldTicket?: Partial<ITicket>;
   }
-]
+}
 
-let idx = 4
+app.get(["/", "/tickets"], async (req: Request, res: Response) => {
 
-app.get(["/", "/tickets"], (req: Request, res: Response) => {
+
+  const tickets = await TicketDb.find()
+
+  const errors = req.session.errors || [];
+  const oldTicket = req.session.oldTicket || {};
+
+  delete req.session.errors;
+  delete req.session.oldTicket;
+
   let data = {
-    title: "bonjour",
-    tickets
+    tickets: tickets,
+    ticket: oldTicket,
+    errors: errors
   }
 
   res.render("tickets", data)
 })
 
-app.post("/tickets/create", (req: Request, res: Response) => {
+app.post("/tickets/create", body('title').notEmpty(), async (req: Request, res: Response) => {
 
-  const ticket: Ticket = {
-    id: idx++,
+  const result = validationResult(req);
+
+  if (!result.isEmpty()) {
+    req.session.errors = result.array();
+    req.session.oldTicket = req.body;
+    res.redirect("/tickets")
+    return
+  }
+
+  const newTicket: ITicket = new TicketDb({
     title: req.body.title,
     description: req.body.description,
     author: req.body.author,
     state: State.OPEN,
     createdAt: new Date(),
     responses: []
-  }
+  });
 
-  tickets.push(ticket)
-
-  res.redirect("/")
-})
-
-
-app.get("/tickets/close/:id", (req: Request, res: Response) => {
-
-  if (req.params.id) {
-
-    let arrayIdx: number = tickets.findIndex(i => i.id === +req.params.id)
-
-    if (arrayIdx > -1) {
-      tickets[arrayIdx].state = State.CLOSED
-    }
-  }
+  await TicketDb.create(newTicket)
 
   res.redirect("/")
 })
 
-app.get("/tickets/delete/:id", (req: Request, res: Response) => {
+
+app.get("/tickets/close/:id", async (req: Request, res: Response) => {
 
   if (req.params.id) {
-
-    let arrayIdx: number = tickets.findIndex(i => i.id === +req.params.id)
-
-    if (arrayIdx > -1) {
-      tickets.splice(arrayIdx, 1)
-    }
-  }
-  res.redirect("/")
-})
-
-
-app.get("/tickets/detail/:id", (req: Request, res: Response) => {
-  if (req.params.id) {
-    let ticket: Ticket | undefined = tickets.find(i => i.id === +req.params.id)
+    const ticket = await TicketDb.findById(req.params.id)
 
     if (ticket) {
-      let data = {
-        ticket
-      }
-      res.render("detail", data)
+      ticket.state = State.CLOSED
+      await ticket.save()
     }
   }
+
+  res.redirect("/")
 })
 
 
-app.get("/tickets/update/:id", (req: Request, res: Response) => {
+app.get("/tickets/open/:id", async (req: Request, res: Response) => {
 
   if (req.params.id) {
-
-    let ticket: Ticket | undefined = tickets.find(i => i.id === +req.params.id)
+    const ticket = await TicketDb.findById(req.params.id)
 
     if (ticket) {
-      let data = {
-        ticket
-      }
-      res.render("update", data)
+      ticket.state = State.OPEN
+      await ticket.save()
     }
   }
+
+  res.redirect("/")
 })
 
-app.post("/tickets/update", (req: Request, res: Response) => {
+app.get("/tickets/delete/:id", async (req: Request, res: Response) => {
 
-  if (req.body.id) {
+  const id = req.params?.id
 
-    let arrayIdx: number = tickets.findIndex(i => i.id === +req.body.id)
+  if (id) {
+    // DB
+    const ticketDeleted = await TicketDb.findByIdAndDelete(id)
+    if (ticketDeleted) {
+      console.info("Ticket supprimé :", ticketDeleted);
+    } else {
+      console.info("Ticket non trouvé");
+    }
 
-    if (arrayIdx > -1) {
-      tickets[arrayIdx].title = req.body.title || tickets[arrayIdx].title
-      tickets[arrayIdx].description = req.body.description || tickets[arrayIdx].description
-      tickets[arrayIdx].author = req.body.author || tickets[arrayIdx].author
+  }
+  res.redirect("/")
+})
+
+
+app.get("/tickets/detail/:id", async (req: Request, res: Response) => {
+  if (req.params.id) {
+    const ticket = await TicketDb.findById(req.params.id)
+
+    if (ticket) {
+      return res.render("detail", { ticket })
     }
   }
   res.redirect("/")
 })
 
-app.post("/tickets/message/create", (req: Request, res: Response) => {
+
+app.get("/tickets/update/:id", async (req: Request, res: Response) => {
+
+  if (req.params.id) {
+    const ticket = await TicketDb.findById(req.params.id)
+
+    if (ticket) {
+      return res.render("update", { ticket })
+    }
+  }
+  res.redirect("/")
+})
+
+app.post("/tickets/update", async (req: Request, res: Response) => {
 
   if (req.body.id) {
+    const ticket = await TicketDb.findById(req.body.id)
 
-    let arrayIdx: number = tickets.findIndex(i => i.id === +req.body.id)
+    if (ticket) {
+      ticket.title = req.body.title || ticket.title
+      ticket.description = req.body.description || ticket.description
+      ticket.author = req.body.author || ticket.author
+      await ticket.save()
+    }
+  }
+  res.redirect("/")
+})
 
-    if (arrayIdx > -1) {
-      tickets[arrayIdx].responses.push(req.body.message)
+app.post("/tickets/responses/create", async (req: Request, res: Response) => {
+
+  if (req.body.id) {
+    const ticket = await TicketDb.findById(req.body.id)
+    if (ticket) {
+      ticket.responses.push(req.body.responses)
+      await ticket.save()
     }
   }
   res.redirect(`/tickets/detail/${req.body.id}`)
 })
 
-app.get("/tickets/:ticketId/responses/supprimer/:messageIdx", (req: Request, res: Response) => {
+app.get("/tickets/:ticketId/responses/delete/:messageIdx", async (req: Request, res: Response) => {
 
   if (req.params.ticketId && req.params.messageIdx) {
-
-    let ticket: Ticket | undefined = tickets.find(i => i.id === +req.params.ticketId)
-
+    const ticket = await TicketDb.findById(req.params.ticketId)
     if (ticket) {
       ticket.responses.splice(+req.params.messageIdx, 1)
+      await ticket.save()
     }
+
     res.redirect(`/tickets/detail/${req.params.ticketId}`)
   }
 

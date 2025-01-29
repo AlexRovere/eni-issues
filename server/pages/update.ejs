@@ -3,7 +3,7 @@
   <div class="flex-grow flex flex-col">
     <form class="w-full max-w-md mx-auto pt-5 " action="/tickets/update" method="POST">
 
-      <input type="hidden" name="id" value="<%= ticket.id %>">
+      <input type="hidden" name="id" value="<%= ticket._id %>">
 
       <div class=" mb-5">
         <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Titre</label>
