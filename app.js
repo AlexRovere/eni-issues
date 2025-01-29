@@ -1,8 +1,12 @@
 const express = require("express");
+const { body, validationResult } = require("express-validator");
+const validationSchema = require("./validators.js");
 
+const dotenv = require("dotenv");
+dotenv.config();
 
 const app = express();
-const port = 3000;
+
 app.set("views", "./views");
 app.set("view engine", "ejs");
 
@@ -29,10 +33,17 @@ app.get("/", (req, res) => {
     res.render("index", { issues, issue, formTitle, formAction, formButton });
 });
 
-app.post("/issues/create", (req, res) => {
+app.post("/issues/create", validationSchema, (req, res) => {
   const { auteur, date, titre, description, etat } = req.body;
+  const issue = { auteur, date, titre, description, etat };
   
-  issues.push({ auteur, date, titre, description, etat });
+  
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.render("index", { issues, issue, formTitle, formAction, formButton, errors: errors.array() });
+  }
+
+  issues.push(issue);
   res.redirect("/");
 });
 
@@ -60,13 +71,13 @@ app.get("/issue/:id", (req, res) => {
   res.render("issue", { issue, issueId: req.params.id });
 });
 
-/* ====================== ISSUE =====================*/
+/* ====================== MESSAGES =====================*/
 app.post("/issue/:id/messages/create", (req, res) => {
   //const issue = issues[req.params.id];
   res.redirect(`/issue/${req.params.id}`);
 });
 
-
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log("Le serveur tourne sur le port " + port);
 

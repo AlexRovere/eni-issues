@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ENI ISSUE</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.0.0/dist/flowbite.min.css" rel="stylesheet" />
   </head>
   <body>
 
@@ -51,6 +52,12 @@
     <h2 id="form_title" class="text-2xl font-bold text-center mb-4"><%= formTitle %></h2>
     <form action="<%= formAction %>" method="POST">
       
+      <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+            <% errors.forEach(error => { %>
+              
+        <% }) %>
+      <% } %>
+
         <!-- Text input -->
         <div class="mb-4 w-full">
           <label for="09eafa27-bce1-49f7-b4e4-c9d6049accf0"
@@ -64,6 +71,20 @@
             id="09eafa27-bce1-49f7-b4e4-c9d6049accf0"
             class="w-full block rounded-lg border dark:border-none dark:bg-neutral-600 py-[9px] px-3 pr-4 text-sm focus:border-blue-400 focus:ring-1 focus:ring-blue-400 focus:outline-none"
           />
+          
+              <% if (error.path === 'auteur') { %>
+                <div class="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
+                  <svg class="shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                  </svg>
+                  <span class="sr-only">Info</span>
+                  <div>
+                    <span class="font-medium">Erreur :</span> <%= error.msg %>
+                  </div>
+                </div>
+              <% } %>
+           
+
         </div>
 
         <!-- Text input -->
@@ -99,12 +120,12 @@
             >Description :</label
           >
           <textarea
-            value="<%= issue.description %>"
+            
             name="description"
             placeholder="Description"
             rows="4"
             class="w-full block rounded-lg border dark:border-none dark:bg-neutral-600 py-[9px] px-3 pr-4 text-sm focus:border-blue-400 focus:ring-1 focus:ring-blue-400 focus:outline-none"
-          ></textarea>
+          ><%= issue.description %></textarea>
         </div>
         <div class="mb-4 w-full">
             <label for="etat">État :</label>
@@ -113,6 +134,9 @@
             <option value="Terminé">Terminé</option>
           </select>
         </div>
+
+         
+
         <!-- Submit Button -->
         <button
           type="submit"
@@ -122,5 +146,9 @@
         </button>
       </div>
     </form>
+
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.0.0/dist/flowbite.min.js"></script>
   </body>
 </html>
