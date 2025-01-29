@@ -1,0 +1,38 @@
+[
+  {
+    "title": "Mon première ticket de la DB",
+    "description": "ma description",
+    "author": "Alex",
+    "state": "Ouvert",
+    "createdAt": "2025-01-29T14:30:00.000Z",
+    "responses": []
+  },
+  {
+    "title": "Mon deuxième ticket de la DB",
+    "description": "ma description",
+    "author": "Jean",
+    "state": "Ouvert",
+    "createdAt": "2025-01-29T14:30:00.000Z",
+    "responses": []
+  },
+  {
+    "title": "omg ca marche",
+    "description": "aze",
+    "author": "Bob",
+    "state": "Fermé",
+    "createdAt": {
+      "$date": "2025-01-29T15:30:42.564Z"
+    },
+    "responses": []
+  },
+  {
+    "title": "save en db !",
+    "description": "hello",
+    "author": "John",
+    "state": "Fermé",
+    "createdAt": {
+      "$date": "2025-01-29T15:35:48.481Z"
+    },
+    "responses": []
+  }
+]
