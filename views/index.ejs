@@ -166,10 +166,10 @@
         </div>
         <div class="mb-4 w-full">
             <label for="etat">État :</label>
-          <select name="etat" id="etat">
-            <option value="En cours">En cours</option>
-            <option value="Terminé">Terminé</option>
-          </select>
+            <select name="etat" id="etat">
+              <option value="En cours" <%= issue.etat === 'En cours' ? 'selected' : '' %>>En cours</option>
+              <option value="Terminé" <%= issue.etat === 'Terminé' ? 'selected' : '' %>>Terminé</option>
+            </select>
         </div>
 
          
