@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { TicketWithId } from 'interfaces/Ticket';
 
 @Injectable({
   providedIn: 'root'
@@ -24,5 +25,16 @@ export class TicketService {
 
   getTicket (id: string): void {
     console.log("Récupération du ticket " + id);
+  }
+
+  getAllTickets (): TicketWithId[] {
+    let tickets: TicketWithId[] = []
+    console.log("Récupération des tickets")
+    this.http.get<TicketWithId[]>(this.serverUrl + "/tickets")
+      .subscribe(data => {
+        console.log(data);
+        tickets.push(...data)
+      })
+    return tickets
   }
 }

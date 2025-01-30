@@ -7,6 +7,7 @@ import connectDB from './database'
 import User from './models/User'
 import Movie from './models/Movie'
 import TicketDb, { ITicket, State } from './models/Ticket'
+import cors from 'cors'
 
 
 dotenv.config();
@@ -29,6 +30,10 @@ app.use(session({
   saveUninitialized: false,
   secret: process.env.SECRET
 }));
+
+app.use(cors({
+  origin: "http://localhost:4200"
+}))
 
 // Types pour la session
 declare module 'express-session' {

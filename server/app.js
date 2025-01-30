@@ -52,6 +52,7 @@ const express_validator_1 = require("express-validator");
 const express_session_1 = __importDefault(require("express-session"));
 const database_1 = __importDefault(require("./database"));
 const Ticket_1 = __importStar(require("./models/Ticket"));
+const cors_1 = __importDefault(require("cors"));
 dotenv_1.default.config();
 (0, database_1.default)();
 const app = (0, express_1.default)();
@@ -67,6 +68,9 @@ app.use((0, express_session_1.default)({
     resave: false,
     saveUninitialized: false,
     secret: process.env.SECRET
+}));
+app.use((0, cors_1.default)({
+    origin: "http://localhost:4200"
 }));
 app.get(["/", "/tickets"], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const tickets = yield Ticket_1.default.find();

@@ -23,7 +23,7 @@ export class TicketsComponent {
     responses: []
   }
 
-  public tickets: TicketWithId[] = [
+  tickets: TicketWithId[] = [
     {
       _id: "azezae16e5az",
       title: "Mon première ticket de la DB",
@@ -44,6 +44,10 @@ export class TicketsComponent {
     }
   ]
 
+  ngOnInit () {
+    this.getAllTickets()
+  }
+
   onSubmitCreateTicket (form: NgForm) {
     if (form.valid) {
       console.log("Formulaire valide");
@@ -62,6 +66,10 @@ export class TicketsComponent {
 
   deleteTicket (id: string) {
     this.ticketService.deleteTicket(id)
+  }
+
+  getAllTickets () {
+    this.tickets = this.ticketService.getAllTickets()
   }
 
 
