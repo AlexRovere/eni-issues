@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { TicketWithId } from 'interfaces/Ticket';
+import { Ticket, TicketWithId } from 'interfaces/Ticket';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,15 @@ export class TicketService {
   private readonly http: HttpClient = inject(HttpClient);
   private readonly serverUrl: string = "http://localhost:3000"
 
+
+  createTicket (ticket: Ticket): void {
+    this.http.post(`${this.serverUrl}/tickets/create`, ticket)
+      .subscribe(data => {
+        console.log(data)
+      })
+    console.log("Création du ticket ", ticket);
+  }
+
   closeTicket (id: string): void {
     console.log("Fermeture du ticket ", id);
   }
@@ -19,8 +29,9 @@ export class TicketService {
     console.log("Réouverture du ticket ", id);
   }
 
-  deleteTicket (id: string): void {
+  deleteTicket (id: string): Observable<HttpResponse<any>> {
     console.log("Suppression du ticket ", id);
+    return this.http.delete<HttpResponse<any>>(`${this.serverUrl}/tickets/delete/${id}`, { observe: 'response' });
   }
 
   getTicket (id: string): void {

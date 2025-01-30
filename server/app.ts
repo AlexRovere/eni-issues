@@ -45,25 +45,15 @@ declare module 'express-session' {
 
 app.get(["/", "/tickets"], async (req: Request, res: Response) => {
 
-
   const tickets = await TicketDb.find()
 
-  const errors = req.session.errors || [];
-  const oldTicket = req.session.oldTicket || {};
-
-  delete req.session.errors;
-  delete req.session.oldTicket;
-
-  let data = {
-    tickets: tickets,
-    ticket: oldTicket,
-    errors: errors
-  }
-
-  res.render("tickets", data)
+  res.json(tickets)
 })
 
 app.post("/tickets/create", body('title').notEmpty(), async (req: Request, res: Response) => {
+
+  console.log(req.body);
+
 
   const result = validationResult(req);
 
@@ -83,9 +73,20 @@ app.post("/tickets/create", body('title').notEmpty(), async (req: Request, res: 
     responses: []
   });
 
-  await TicketDb.create(newTicket)
+  try {
+    const ticketCreated = await TicketDb.create(newTicket)
 
-  res.redirect("/")
+    if (ticketCreated) {
+      res.status(200).json({ message: 'Ticket crée avec succès', ticket: ticketCreated })
+      console.info("Ticket crée :", ticketCreated);
+    } else {
+      res.status(403).json({ message: 'Erreur lors de la création du ticket' });
+    }
+  } catch (e: any) {
+    res.status(500).json({ message: 'Erreur lors de la création du ticket' });
+    console.error(e)
+  }
+
 })
 
 
@@ -100,7 +101,6 @@ app.get("/tickets/close/:id", async (req: Request, res: Response) => {
     }
   }
 
-  res.redirect("/")
 })
 
 
@@ -115,24 +115,28 @@ app.get("/tickets/open/:id", async (req: Request, res: Response) => {
     }
   }
 
-  res.redirect("/")
 })
 
-app.get("/tickets/delete/:id", async (req: Request, res: Response) => {
-
+app.delete("/tickets/delete/:id", async (req: Request, res: Response) => {
   const id = req.params?.id
 
   if (id) {
-    // DB
-    const ticketDeleted = await TicketDb.findByIdAndDelete(id)
-    if (ticketDeleted) {
-      console.info("Ticket supprimé :", ticketDeleted);
-    } else {
-      console.info("Ticket non trouvé");
-    }
+    try {
+      const ticketDeleted = await TicketDb.findByIdAndDelete(id)
+      console.log(ticketDeleted);
 
+      if (ticketDeleted) {
+        res.status(200).json({ message: 'Ticket supprimé avec succès', ticket: ticketDeleted })
+        console.info("Ticket supprimé :", ticketDeleted);
+      } else {
+        res.status(403).json({ message: 'Ticket non trouvé' });
+        console.info("Ticket non trouvé");
+      }
+    } catch (e: any) {
+      res.status(500).json({ message: 'Erreur lors de la suppression du ticket' });
+      console.error(e)
+    }
   }
-  res.redirect("/")
 })
 
 
@@ -144,7 +148,6 @@ app.get("/tickets/detail/:id", async (req: Request, res: Response) => {
       return res.render("detail", { ticket })
     }
   }
-  res.redirect("/")
 })
 
 
@@ -157,7 +160,6 @@ app.get("/tickets/update/:id", async (req: Request, res: Response) => {
       return res.render("update", { ticket })
     }
   }
-  res.redirect("/")
 })
 
 app.post("/tickets/update", async (req: Request, res: Response) => {
@@ -172,7 +174,6 @@ app.post("/tickets/update", async (req: Request, res: Response) => {
       await ticket.save()
     }
   }
-  res.redirect("/")
 })
 
 app.post("/tickets/responses/create", async (req: Request, res: Response) => {

@@ -50,10 +50,19 @@ export class TicketsComponent {
 
   onSubmitCreateTicket (form: NgForm) {
     if (form.valid) {
+      this.createTicket()
       console.log("Formulaire valide");
     } else {
       console.error("Formulaire non valide")
     }
+  }
+
+  createTicket () {
+    this.ticketService.createTicket(this.ticket)
+    this.getAllTickets()
+    this.ticket.title = ""
+    this.ticket.description = ""
+    this.ticket.author = ""
   }
 
   closeTicket (id: string) {
@@ -65,7 +74,19 @@ export class TicketsComponent {
   }
 
   deleteTicket (id: string) {
-    this.ticketService.deleteTicket(id)
+    this.ticketService.deleteTicket(id).subscribe({
+      next: (response) => {
+        console.log(response)
+
+        if (response.status === 200) {
+          console.log(response.body.message)
+          this.getAllTickets()
+        }
+        if (response.status === 404 || response.status === 500) {
+          console.error(response.body.message);
+        }
+      }
+    })
   }
 
   getAllTickets () {
