@@ -1,4 +1,4 @@
-const { checkSchema } = require('express-validator');
+import { checkSchema } from 'express-validator';
 const validationSchema = checkSchema({
     auteur: {
         in: ['body'],
@@ -15,6 +15,23 @@ const validationSchema = checkSchema({
             options: { min: 3, max: 50 }
         }
 
-    } 
+    },
+    description: {
+        in: ['body'],
+        isLength: {
+            errorMessage: 'La description de l\'issue doit contenir entre 3 et 500 caractères',
+            options: { min: 3, max: 500 }
+        }
+
+    },
+    date: {
+        in: ['body'],
+        isISO8601: {
+            errorMessage: 'La date doit être au format ISO8601'
+        }
+
+    },
+
+
 });
-module.exports = validationSchema;
+export default validationSchema;

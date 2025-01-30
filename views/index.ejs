@@ -11,7 +11,7 @@
 
     <div style="width: 60%; margin: auto">
 
-        <% if(issues && issues.length > 0) { %>
+        <% if(typeof issues !== 'undefined' && issues.length > 0) { %>
             <h1 class="text-2xl font-bold text-center mb-4">Liste des issues</h1>
         
 <div class="relative overflow-x-auto">
@@ -30,9 +30,9 @@
             <% issues.forEach(issue => { %>
             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
                 <td class="px-6 py-4">
-                    <p><a href="/issue/<%= issues.indexOf(issue); %>">Voir</a></p>
-                    <p><a href="/issues/delete/<%= issues.indexOf(issue); %>">Supprimer</a></p>
-                    <p><a href="/issues/update/<%= issues.indexOf(issue); %>">Modifier</a></p>
+                    <p><a href="/issue/<%= issue.uuid; %>">Voir</a></p>
+                    <p><a href="/issues/delete/<%= issue.uuid; %>">Supprimer</a></p>
+                    <p><a href="/issues/update/<%= issue.uuid; %>">Modifier</a></p>
                 </p></td>
                 <td class="px-6 py-4"><%= issue.auteur %></td>
                 <td class="px-6 py-4"><%= issue.date %></td>
@@ -40,6 +40,7 @@
                 <td class="px-6 py-4"><%= issue.description %></td>
                 <td class="px-6 py-4"><%= issue.etat %></td>
             </tr>
+            <tr><td colspan="6"><p style="text-align: center">Cette issue contient <%= issue.messages.length %> messages</p></td></tr>
             <% }) %>
         </tbody>
     </table>
@@ -64,7 +65,7 @@
             >Nom de l'auteur :</label
           >
           <input
-          value="<%= issue.auteur %>"
+          value="<% if(typeof issue !== 'undefined') { %><%= issue.auteur %><% } %>"
             name="auteur"
             placeholder="Nom de l'auteur"
             type="text"
@@ -93,7 +94,7 @@
             >Date de création :</label
           >
           <input
-          value="<%= issue.date %>"
+          value="<% if(typeof issue !== 'undefined') { %><%= issue.date %><% } %>"
           name="date"  
           placeholder="Date de création"
             type="date"
@@ -119,7 +120,7 @@
         <div class="mb-4 w-full">
           <label for="31ab91a8-944c-4ad6-abe0-abdd61e5515d">Titre :</label>
           <input
-          value="<%= issue.titre %>"
+          value="<% if(typeof issue !== 'undefined') { %><%= issue.titre %><% } %>"
             name="titre"
             type="text"
             id="31ab91a8-944c-4ad6-abe0-abdd61e5515d"
@@ -150,7 +151,7 @@
             placeholder="Description"
             rows="4"
             class="w-full block rounded-lg border dark:border-none dark:bg-neutral-600 py-[9px] px-3 pr-4 text-sm focus:border-blue-400 focus:ring-1 focus:ring-blue-400 focus:outline-none"
-          ><%= issue.description %></textarea>
+          ><% if(typeof issue !== 'undefined') { %><%= issue.description %><% } %></textarea>
           
               <% if (typeof mesErreurs['description'] !== 'undefined') { %>
                 <div class="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
@@ -167,8 +168,8 @@
         <div class="mb-4 w-full">
             <label for="etat">État :</label>
             <select name="etat" id="etat">
-              <option value="En cours" <%= issue.etat === 'En cours' ? 'selected' : '' %>>En cours</option>
-              <option value="Terminé" <%= issue.etat === 'Terminé' ? 'selected' : '' %>>Terminé</option>
+              <option value="En cours" <%= typeof issue !== 'undefined' && issue.etat === 'En cours' ? 'selected' : '' %>>En cours</option>
+              <option value="Terminé" <%= typeof issue !== 'undefined' && issue.etat === 'Terminé' ? 'selected' : '' %>>Terminé</option>
             </select>
         </div>
 
