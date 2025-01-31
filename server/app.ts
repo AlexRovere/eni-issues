@@ -4,8 +4,6 @@ import path from 'path'
 import { body, ValidationError, validationResult } from 'express-validator';
 import session from 'express-session'
 import connectDB from './database'
-import User from './models/User'
-import Movie from './models/Movie'
 import TicketDb, { ITicket, State } from './models/Ticket'
 import cors from 'cors'
 
@@ -32,7 +30,8 @@ app.use(session({
 }));
 
 app.use(cors({
-  origin: "http://localhost:4200"
+  origin: 'http://localhost:4200',
+  allowedHeaders: ['Content-Type', 'Authorization']
 }))
 
 // Types pour la session
@@ -44,50 +43,63 @@ declare module 'express-session' {
 }
 
 app.get(["/", "/tickets"], async (req: Request, res: Response) => {
-
-  const tickets = await TicketDb.find()
-
-  res.json(tickets)
-})
-
-app.post("/tickets/create", body('title').notEmpty(), async (req: Request, res: Response) => {
-
-  console.log(req.body);
-
-
-  const result = validationResult(req);
-
-  if (!result.isEmpty()) {
-    req.session.errors = result.array();
-    req.session.oldTicket = req.body;
-    res.redirect("/tickets")
-    return
-  }
-
-  const newTicket: ITicket = new TicketDb({
-    title: req.body.title,
-    description: req.body.description,
-    author: req.body.author,
-    state: State.OPEN,
-    createdAt: new Date(),
-    responses: []
-  });
-
   try {
-    const ticketCreated = await TicketDb.create(newTicket)
-
-    if (ticketCreated) {
-      res.status(200).json({ message: 'Ticket crée avec succès', ticket: ticketCreated })
-      console.info("Ticket crée :", ticketCreated);
+    const tickets = await TicketDb.find()
+    if (tickets) {
+      res.status(200).json({ message: 'Tickets récupérés avec succès', tickets })
     } else {
-      res.status(403).json({ message: 'Erreur lors de la création du ticket' });
+      res.status(404).json({ message: 'Erreur lors de la récupération des tickets' });
     }
   } catch (e: any) {
-    res.status(500).json({ message: 'Erreur lors de la création du ticket' });
+    res.status(500).json({ message: 'Erreur lors de la récupération des tickets' });
     console.error(e)
   }
-
 })
+
+app.post("/tickets/create",
+  body('title').notEmpty().withMessage('required'),
+  body('description').notEmpty().withMessage('required'),
+  body('author').notEmpty().withMessage('required'),
+  body('title').isLength({ min: 3 }).withMessage("length")
+  , async (req: Request, res: Response) => {
+
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+      const formErrors = result.array().map((e: any) => {
+        return {
+          type: e.msg,
+          field: e.path
+        }
+      });
+      res.status(400).json({ message: 'Le formulaire n\'est pas valide', formErrors });
+      return
+    }
+
+    const newTicket: ITicket = new TicketDb({
+      title: req.body.title,
+      description: req.body.description,
+      author: req.body.author,
+      state: State.OPEN,
+      createdAt: new Date(),
+      responses: []
+    });
+
+    try {
+      const ticketCreated = await TicketDb.create(newTicket)
+
+      if (ticketCreated) {
+        res.status(200).json({ message: 'Ticket crée avec succès', ticket: ticketCreated })
+        console.info("Ticket crée :", ticketCreated);
+      } else {
+        res.status(403).json({ message: 'Erreur lors de la création du ticket' });
+      }
+    } catch (e: any) {
+      res.status(500).json({ message: 'Erreur lors de la création du ticket' });
+      console.error(e)
+    }
+
+  })
 
 
 app.get("/tickets/close/:id", async (req: Request, res: Response) => {
@@ -120,22 +132,25 @@ app.get("/tickets/open/:id", async (req: Request, res: Response) => {
 app.delete("/tickets/delete/:id", async (req: Request, res: Response) => {
   const id = req.params?.id
 
-  if (id) {
-    try {
-      const ticketDeleted = await TicketDb.findByIdAndDelete(id)
-      console.log(ticketDeleted);
+  if (!id) {
+    res.status(400).json({ message: 'ID du ticket requis' })
+    return
+  }
 
-      if (ticketDeleted) {
-        res.status(200).json({ message: 'Ticket supprimé avec succès', ticket: ticketDeleted })
-        console.info("Ticket supprimé :", ticketDeleted);
-      } else {
-        res.status(403).json({ message: 'Ticket non trouvé' });
-        console.info("Ticket non trouvé");
-      }
-    } catch (e: any) {
-      res.status(500).json({ message: 'Erreur lors de la suppression du ticket' });
-      console.error(e)
+  try {
+    const ticketDeleted = await TicketDb.findByIdAndDelete(id)
+    console.log(ticketDeleted);
+
+    if (ticketDeleted) {
+      res.status(200).json({ message: 'Ticket supprimé avec succès', ticket: ticketDeleted })
+      console.info("Ticket supprimé :", ticketDeleted);
+    } else {
+      res.status(403).json({ message: 'Ticket non trouvé' });
+      console.info("Ticket non trouvé");
     }
+  } catch (e: any) {
+    res.status(500).json({ message: 'Erreur lors de la suppression du ticket' });
+    console.error(e)
   }
 })
 

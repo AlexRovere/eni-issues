@@ -1,7 +1,8 @@
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Ticket, TicketWithId } from 'interfaces/Ticket';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
+import { FormError } from '../errors/FormError';
 
 @Injectable({
   providedIn: 'root'
@@ -13,12 +14,10 @@ export class TicketService {
   private readonly serverUrl: string = "http://localhost:3000"
 
 
-  createTicket (ticket: Ticket): void {
-    this.http.post(`${this.serverUrl}/tickets/create`, ticket)
-      .subscribe(data => {
-        console.log(data)
-      })
-    console.log("Création du ticket ", ticket);
+  createTicket (ticket: Ticket): Observable<any> {
+    return this.http.post(`${this.serverUrl}/tickets/create`, ticket).pipe(
+      catchError((res: HttpErrorResponse) => this.handleError(res))
+    )
   }
 
   closeTicket (id: string): void {
@@ -30,8 +29,9 @@ export class TicketService {
   }
 
   deleteTicket (id: string): Observable<HttpResponse<any>> {
-    console.log("Suppression du ticket ", id);
-    return this.http.delete<HttpResponse<any>>(`${this.serverUrl}/tickets/delete/${id}`, { observe: 'response' });
+    return this.http.delete<HttpResponse<any>>(`${this.serverUrl}/tickets/delete/${id}`).pipe(
+      catchError((res: HttpErrorResponse) => this.handleError(res))
+    )
   }
 
   getTicket (id: string): void {
@@ -40,12 +40,28 @@ export class TicketService {
 
   getAllTickets (): TicketWithId[] {
     let tickets: TicketWithId[] = []
-    console.log("Récupération des tickets")
     this.http.get<TicketWithId[]>(this.serverUrl + "/tickets")
       .subscribe(data => {
-        console.log(data);
         tickets.push(...data)
       })
     return tickets
+  }
+
+  getAllTicketsObs (): Observable<any> {
+    return this.http.get<TicketWithId[]>(this.serverUrl + "/tickets").pipe(
+      catchError((res: HttpErrorResponse) => this.handleError(res))
+    )
+  }
+
+  handleError (res: any) {
+    return throwError(() => {
+      if (res.error?.formErrors) {
+        return new FormError(res.error.message, res.error.formErrors)
+      }
+      if (res.error?.message) {
+        return new Error(res.error.message)
+      }
+      return new Error("Erreur lors de la récupération de la ressource..")
+    })
   }
 }

@@ -1,68 +1,72 @@
 import { Component, inject } from '@angular/core';
 import { SharedModule } from '../../shared.module';
 import { TicketService } from 'services/ticket.service';
-import { NgForm } from '@angular/forms';
 import { State, Ticket, TicketWithId } from 'interfaces/Ticket';
+import { FormError } from '../../../errors/FormError';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-tickets',
-  imports: [SharedModule],
+  imports: [SharedModule, ReactiveFormsModule],
   templateUrl: './tickets.component.html',
   styleUrl: './tickets.component.scss'
 })
 export class TicketsComponent {
 
   private readonly ticketService = inject(TicketService)
+  private readonly formBuilder = inject(FormBuilder)
 
-  ticket: Ticket = {
-    title: "",
-    description: "",
-    author: "",
-    state: State.OPEN,
-    createdAt: new Date(),
-    responses: []
-  }
+  createTicketForm!: FormGroup;
 
-  tickets: TicketWithId[] = [
-    {
-      _id: "azezae16e5az",
-      title: "Mon première ticket de la DB",
-      description: "ma description",
-      author: "Alex",
-      state: State.OPEN,
-      createdAt: new Date(),
-      responses: []
-    },
-    {
-      _id: "azezae16azeazzae5az",
-      title: "Mon deuxième ticket de la DB",
-      description: "ma description",
-      author: "Jean",
-      state: State.OPEN,
-      createdAt: new Date(),
-      responses: []
-    }
-  ]
+  tickets: TicketWithId[] = []
 
   ngOnInit () {
     this.getAllTickets()
+    this.initForm()
   }
 
-  onSubmitCreateTicket (form: NgForm) {
-    if (form.valid) {
+  initForm () {
+    this.createTicketForm = this.formBuilder.group({
+      title: [''],
+      description: ['', Validators.required],
+      author: ['', Validators.required],
+      state: State.OPEN,
+      createdAt: new Date(),
+      responses: []
+    });
+  }
+
+  onSubmitCreateTicket () {
+    if (this.createTicketForm.valid) {
       this.createTicket()
-      console.log("Formulaire valide");
     } else {
-      console.error("Formulaire non valide")
+      this.createTicketForm.markAllAsTouched();
     }
   }
 
   createTicket () {
-    this.ticketService.createTicket(this.ticket)
-    this.getAllTickets()
-    this.ticket.title = ""
-    this.ticket.description = ""
-    this.ticket.author = ""
+    const ticket: Ticket = this.createTicketForm.value
+    this.ticketService.createTicket(ticket).subscribe({
+      next: (response) => {
+        this.initForm()
+        this.getAllTickets()
+      },
+      error: (error) => {
+        // Gestion des erreurs venant du back-end
+        if (error instanceof FormError) {
+          error.errors.forEach(e => {
+            const field = this.createTicketForm.get(e.field)
+            if (field) {
+              const newError = { [e.type]: true }
+              field.setErrors({ ...field.errors, ...newError })
+            }
+          })
+          this.createTicketForm.markAllAsTouched()
+        } else {
+          console.error(error);
+        }
+      }
+    })
   }
 
   closeTicket (id: string) {
@@ -76,22 +80,25 @@ export class TicketsComponent {
   deleteTicket (id: string) {
     this.ticketService.deleteTicket(id).subscribe({
       next: (response) => {
-        console.log(response)
+        console.log(response);
 
-        if (response.status === 200) {
-          console.log(response.body.message)
-          this.getAllTickets()
-        }
-        if (response.status === 404 || response.status === 500) {
-          console.error(response.body.message);
-        }
+        this.getAllTickets()
+      },
+      error: (error) => {
+        console.error(error);
       }
     })
   }
 
   getAllTickets () {
-    this.tickets = this.ticketService.getAllTickets()
+    this.ticketService.getAllTicketsObs().subscribe({
+      next: (response) => {
+        this.tickets = response?.tickets
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    })
   }
-
 
 }

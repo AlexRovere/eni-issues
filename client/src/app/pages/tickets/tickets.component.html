@@ -1,22 +1,33 @@
 <div class="flex-grow m-5">
-  <form #createTicketForm="ngForm" (ngSubmit)="onSubmitCreateTicket(createTicketForm)" class="max-w-sm mx-auto">
+  <form [formGroup]="createTicketForm" (ngSubmit)="onSubmitCreateTicket()" class="max-w-sm mx-auto">
     <div class="mb-5">
-      <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Titre</label>
-      <input ngModel required name="title" type="text" id="title" [(ngModel)]="ticket.title" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+      <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Titre*</label>
+      <input formControlName="title" type="text" id="title" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+      <div *ngIf="createTicketForm.get('title')?.invalid && createTicketForm.get('title')?.touched" class="mt-2 text-sm text-red-600 dark:text-red-500">
+        <div *ngIf="createTicketForm.get('title')?.hasError('required')">Le titre est requis.</div>
+        <div *ngIf="createTicketForm.get('title')?.hasError('length')">La longeur doit être supérieur à 3 caractères.</div>
+      </div>
     </div>
 
     <div class="mb-5">
-      <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Description</label>
-      <input ngModel required name="description" type="text" id="description" [(ngModel)]="ticket.description" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+      <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Description*</label>
+      <input formControlName="description" type="text" id="description" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+      <div *ngIf="createTicketForm.get('description')?.invalid && createTicketForm.get('description')?.touched" class="mt-2 text-sm text-red-600 dark:text-red-500">
+        <div *ngIf="createTicketForm.get('description')?.hasError('required')">La description est requise.</div>
+      </div>
     </div>
 
     <div class="mb-5">
-      <label for="author" class="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Auteur</label>
-      <input ngModel required name="author" type="text" id="author" [(ngModel)]="ticket.author" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+      <label for="author" class="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Auteur*</label>
+      <input formControlName="author" type="text" id="author" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+      <div *ngIf="createTicketForm.get('author')?.invalid && createTicketForm.get('author')?.touched" class="mt-2 text-sm text-red-600 dark:text-red-500">
+        <div *ngIf="createTicketForm.get('author')?.hasError('required')">L'auteur est requis.</div>
+      </div>
     </div>
 
     <div class="flex justify-center">
-      <button [disabled]="!createTicketForm.valid" type="submit" class="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Créer</button>
+
+      <button [disabled]="!createTicketForm.valid" [ngClass]="{ 'opacity-50 cursor-not-allowed': !createTicketForm.valid }" type="submit" class="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Créer</button>
     </div>
   </form>
 
