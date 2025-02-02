@@ -70,16 +70,33 @@ export class TicketsComponent {
   }
 
   closeTicket (id: string) {
-    this.ticketService.closeTicket(id)
+    this.ticketService.closeTicket(id).subscribe({
+      next: (response) => {
+        this.getAllTickets()
+        console.log("Ticket fermé avec succès")
+      },
+      error: (error) => {
+        console.error(error)
+      }
+    })
   }
 
   openTicket (id: string) {
-    this.ticketService.openTicket(id)
+    this.ticketService.openTicket(id).subscribe({
+      next: (response) => {
+        this.getAllTickets()
+        console.log("Ticket ouvert avec succès")
+      },
+      error: (error) => {
+        console.error(error)
+      }
+    })
   }
 
   deleteTicket (id: string) {
     this.ticketService.deleteTicket(id).subscribe({
       next: (response) => {
+        this.getAllTickets()
         console.log(response);
 
         this.getAllTickets()
@@ -91,7 +108,7 @@ export class TicketsComponent {
   }
 
   getAllTickets () {
-    this.ticketService.getAllTicketsObs().subscribe({
+    this.ticketService.getAllTickets().subscribe({
       next: (response) => {
         this.tickets = response?.tickets
       },

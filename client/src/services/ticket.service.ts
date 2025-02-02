@@ -14,18 +14,22 @@ export class TicketService {
   private readonly serverUrl: string = "http://localhost:3000"
 
 
-  createTicket (ticket: Ticket): Observable<any> {
-    return this.http.post(`${this.serverUrl}/tickets/create`, ticket).pipe(
+  createTicket (ticket: Ticket): Observable<HttpResponse<any>> {
+    return this.http.post<HttpResponse<any>>(`${this.serverUrl}/tickets/create`, ticket).pipe(
       catchError((res: HttpErrorResponse) => this.handleError(res))
     )
   }
 
-  closeTicket (id: string): void {
-    console.log("Fermeture du ticket ", id);
+  closeTicket (id: string): Observable<HttpResponse<any>> {
+    return this.http.get<HttpResponse<any>>(`${this.serverUrl}/tickets/close/${id}`).pipe(
+      catchError((res: HttpErrorResponse) => this.handleError(res))
+    )
   }
 
-  openTicket (id: string): void {
-    console.log("Réouverture du ticket ", id);
+  openTicket (id: string): Observable<HttpResponse<any>> {
+    return this.http.get<HttpResponse<any>>(`${this.serverUrl}/tickets/open/${id}`).pipe(
+      catchError((res: HttpErrorResponse) => this.handleError(res))
+    )
   }
 
   deleteTicket (id: string): Observable<HttpResponse<any>> {
@@ -34,21 +38,14 @@ export class TicketService {
     )
   }
 
-  getTicket (id: string): void {
-    console.log("Récupération du ticket " + id);
+  getTicket (id: string): Observable<HttpResponse<any>> {
+    return this.http.get<HttpResponse<any>>(`${this.serverUrl}/tickets/${id}`).pipe(
+      catchError((res: HttpErrorResponse) => this.handleError(res))
+    )
   }
 
-  getAllTickets (): TicketWithId[] {
-    let tickets: TicketWithId[] = []
-    this.http.get<TicketWithId[]>(this.serverUrl + "/tickets")
-      .subscribe(data => {
-        tickets.push(...data)
-      })
-    return tickets
-  }
-
-  getAllTicketsObs (): Observable<any> {
-    return this.http.get<TicketWithId[]>(this.serverUrl + "/tickets").pipe(
+  getAllTickets (): Observable<any> {
+    return this.http.get(this.serverUrl + "/tickets").pipe(
       catchError((res: HttpErrorResponse) => this.handleError(res))
     )
   }

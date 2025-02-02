@@ -103,28 +103,49 @@ app.post("/tickets/create",
 
 
 app.get("/tickets/close/:id", async (req: Request, res: Response) => {
+  const id = req.params?.id
 
-  if (req.params.id) {
-    const ticket = await TicketDb.findById(req.params.id)
+  if (!id) {
+    res.status(400).json({ message: 'ID du ticket requis' })
+    return
+  }
+  try {
+    const ticket = await TicketDb.findById(id)
 
     if (ticket) {
       ticket.state = State.CLOSED
       await ticket.save()
+      res.status(200).json({ message: 'Ticket modifié avec succès' });
+    } else {
+      res.status(403).json({ message: 'Ticket non trouvé' });
     }
+  } catch (e: any) {
+    res.status(500).json({ message: 'Erreur lors de la modification du ticket' });
+    console.error(e)
   }
 
 })
 
 
 app.get("/tickets/open/:id", async (req: Request, res: Response) => {
+  const id = req.params?.id
 
-  if (req.params.id) {
-    const ticket = await TicketDb.findById(req.params.id)
-
+  if (!id) {
+    res.status(400).json({ message: 'ID du ticket requis' })
+    return
+  }
+  try {
+    const ticket = await TicketDb.findById(id)
     if (ticket) {
       ticket.state = State.OPEN
       await ticket.save()
+      res.status(200).json({ message: 'Ticket modifié avec succès' });
+    } else {
+      res.status(403).json({ message: 'Ticket non trouvé' });
     }
+  } catch (e: any) {
+    res.status(500).json({ message: 'Erreur lors de la modification du ticket' });
+    console.error(e)
   }
 
 })
